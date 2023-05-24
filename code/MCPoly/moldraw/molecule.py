@@ -3920,7 +3920,7 @@ class molecule:
         '''
         if name=='':
             name=self.file
-        return write(self.file+'.xyz',self.atoms)
+        return write(name+'.xyz',self.atoms)
     
     def straight(self,start,end):
         '''
