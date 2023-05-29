@@ -5,9 +5,9 @@ Some methods to deal with some manipulation of computational chemistry, mostly a
 ## Overview
 `MCPoly` is a Python library to make some steps of computational chemistry easier. It includes some functions of drawing molecule structures, creating proper .xyz , .inp , .mol and .data file, which specialised for using ORCA and LAMMPS, and some functions for researching the mechanical property of some polymers.
 
-## Updated in v0.3.1 (22.05.23)
-1. Change the style of the reaction energy diagram, which can make the pattern of the figure better.
-2. Status update: Now you can use it to get charge, entropy and basic information of atoms.
+## Updated in v0.4.0 (29.05.23)
+BIG UPDATE: Molecule Designer GUI is included in this package. You can now use it to draw moleculea with 3D view at the same time.
+<img src="https://github.com/Omicron-Fluor/MCPoly/blob/main/reference/moldraw_gui.png">
 
 ## Updated in v0.3.0 (19.05.23)
 1. BIG UPDATE: Now status package can be used to see energy and gibbs free energy by .energy and .gibbs.
@@ -20,11 +20,6 @@ Some methods to deal with some manipulation of computational chemistry, mostly a
 2. BIG UPDATE: MCPoly.vis is created. Use MCPoly.vis() to directly show all four GUI screen.
 <img src="https://github.com/Omicron-Fluor/MCPoly/blob/main/reference/vis.png">
 3. Fix some bugs on mechanical calculations and stress-strain curve drawings.
-
-## Updated in v0.1.0 (11.05.23)
-1. BIG UPDATE: Add GUI ORCA setting screens for normal ORCA calculations and Mechanical ORCA calculation. You can use orcaset.gui and orcaset.ssgui to learn more.
-<img src="https://github.com/Omicron-Fluor/MCPoly/blob/main/reference/ssgui_shot.png">
-2. Fix some bugs on mechanical calculations and stress-strain curve drawings.
 
 ## Functions for ORCA
 <img src="https://github.com/Omicron-Fluor/MCPoly/blob/main/reference/ORCA.png" width="400" height="263" >
