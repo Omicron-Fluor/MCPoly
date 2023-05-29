@@ -5,16 +5,16 @@ from ase import Atoms
 from ase.visualize import view
 
 def C_selection(substitution,atoms,Cnear,state=[1,1]):
-    if substitution=='CO':
-        return CO(atoms,Cnear,state=[1,1])
-    if substitution=='CNH':
-        return CNH(atoms,Cnear,state=[1,1])
+    if substitution=='CO' or substitution=='C=O':
+        return CO(atoms,Cnear,state)
+    if substitution=='CNH' or substitution=='C=NH':
+        return CNH(atoms,Cnear,state)
     if substitution=='O':
-        return O(atoms,Cnear,state=[1,1])
+        return O(atoms,Cnear,state)
     if substitution=='S':
-        return S(atoms,Cnear,state=[1,1])
+        return S(atoms,Cnear,state)
     if substitution=='N':
-        return N(atoms,Cnear,state=[1,1])
+        return N(atoms,Cnear,state)
                         
 def CO(atoms,Cnear,state=[1,1]):
     atoms.append('O')

@@ -71,9 +71,9 @@ def sub_selection(substitution,atoms,i,state=1,place=0,strict={1:'X'},shuffle=0,
         return SO2_('CH3',atoms,i,state)
     elif substitution=='SO3H':
         return SO2_('OH',atoms,i,state)
-    elif substitution=='double5' or substitution=='d5' or substitution=='D5':
+    elif substitution=='double5' or substitution=='d5' or substitution=='D5' or substitution=='bicyclo[2.2.1]':
         return D(5,atoms,i,state,shuffle)
-    elif substitution=='double6' or substitution=='d6' or substitution=='D6':
+    elif substitution=='double6' or substitution=='d6' or substitution=='D6' or substitution=='bicyclo[2.2.2]':
         return D(6,atoms,i,state,shuffle)
     elif substitution=='Bpin':
         return Bpin(atoms,i,state,shuffle)
@@ -1121,36 +1121,51 @@ def Pyrrole(atoms,i,state=1,place=0,shuffle=0):
         mask[-2]=0
     return atoms
 
-def ring3(atoms,i,state=1,strict='C'):
+def ring3(atoms,i,state=1,strict={1:'X'}):
     for j in range(2):
         atoms.append('C')
     for j in range(5):
         atoms.append('H')
     total_atoms=len(atoms)
     Cnear=near(i, atoms)
-    CnearC=near(Cnear,atoms,strict)
+    CnearC=near(Cnear,atoms,'C')
     mask=[0]*(total_atoms-7)+[1]*7
     elements=atoms.get_chemical_symbols()
     elements[i]='C'
+    try:
+        if strict[1]=='N':
+            elements[i]='N'
+        else:
+            elements[i]='C'
+    except:
+        elements[i]='C'
     atoms.set_chemical_symbols(elements)
-    if state==1:
-        atoms.set_distance(i,Cnear,1.5290,fix=1)
-    elif state==2 or state==82:
-        atoms.set_distance(i,Cnear,1.5095,fix=1)
-    elif state==3:
-        atoms.set_distance(i,Cnear,1.4700,fix=1)
-    elif state==6:
-        atoms.set_distance(i,Cnear,1.5105,fix=1)
-    elif state==7:
-        atoms.set_distance(i,Cnear,1.4480,fix=1)
-    elif state==8:
-        atoms.set_distance(i,Cnear,1.4100,fix=1)
-    elif state==16:
-        atoms.set_distance(i,Cnear,1.8100,fix=1)
-    elif state==162:
-        atoms.set_distance(i,Cnear,1.7900,fix=1)
-    elif state==164:
-        atoms.set_distance(i,Cnear,1.7700,fix=1)
+    if elements[i]=='C':
+        if state==1:
+            atoms.set_distance(i,Cnear,1.5290,fix=1)
+        elif state==2 or state==82:
+            atoms.set_distance(i,Cnear,1.5095,fix=1)
+        elif state==3:
+            atoms.set_distance(i,Cnear,1.4700,fix=1)
+        elif state==6:
+            atoms.set_distance(i,Cnear,1.5105,fix=1)
+        elif state==7:
+            atoms.set_distance(i,Cnear,1.4480,fix=1)
+        elif state==8:
+            atoms.set_distance(i,Cnear,1.4100,fix=1)
+        elif state==16:
+            atoms.set_distance(i,Cnear,1.8100,fix=1)
+        elif state==162:
+            atoms.set_distance(i,Cnear,1.7900,fix=1)
+        elif state==164:
+            atoms.set_distance(i,Cnear,1.7700,fix=1)
+    elif elements[i]=='N':
+        if state==1:
+            atoms.set_distance(i,Cnear,1.448,fix=1)
+        elif state==2 or state==6:
+            atoms.set_distance(i,Cnear,1.340,fix=1)
+        else:
+            atoms.set_distance(i,Cnear,1.448,fix=1)
     x=atoms.get_positions()
     x[-5][0]=x[-5][0]-50
     x[-5][1]=x[-5][1]-50
@@ -1170,18 +1185,31 @@ def ring3(atoms,i,state=1,strict='C'):
         x[j][1]=x[j][1]+50
         x[j][2]=x[j][2]+50
     atoms.set_positions(x)
-    atoms.set_angle(Cnear,i,total_atoms-5,109.5,mask=mask)
-    atoms.set_distance(total_atoms-5,i,1.0900,fix=1,mask=mask)
-    atoms.set_dihedral(CnearC,Cnear,i,total_atoms-5,-150,mask=mask)
-    mask[-5]=0
-    atoms.set_angle(Cnear,i,total_atoms-7,122.5,mask=mask)
-    atoms.set_distance(total_atoms-7,i,1.5290,fix=1,mask=mask)
-    atoms.set_dihedral(CnearC,Cnear,i,total_atoms-7,0.5,mask=mask)
-    mask[-7]=0
-    atoms.set_angle(Cnear,i,total_atoms-6,122.5,mask=mask)
-    atoms.set_distance(total_atoms-6,i,1.5290,fix=1,mask=mask)
-    atoms.set_dihedral(CnearC,Cnear,i,total_atoms-6,73.5,mask=mask)
-    mask[-6]=0
+    if elements[i]=='C':
+        atoms.set_angle(Cnear,i,total_atoms-5,109.5,mask=mask)
+        atoms.set_distance(total_atoms-5,i,1.0900,fix=1,mask=mask)
+        atoms.set_dihedral(CnearC,Cnear,i,total_atoms-5,-150,mask=mask)
+        mask[-5]=0
+    else:
+        mask[-5]=0
+    if elements[i]=='N':
+        atoms.set_angle(Cnear,i,total_atoms-7,122.5,mask=mask)
+        atoms.set_distance(total_atoms-7,i,1.4480,fix=1,mask=mask)
+        atoms.set_dihedral(CnearC,Cnear,i,total_atoms-7,0.5,mask=mask)
+        mask[-7]=0
+        atoms.set_angle(Cnear,i,total_atoms-6,122.5,mask=mask)
+        atoms.set_distance(total_atoms-6,i,1.4480,fix=1,mask=mask)
+        atoms.set_dihedral(CnearC,Cnear,i,total_atoms-6,73.5,mask=mask)
+        mask[-6]=0
+    elif elements[i]=='C':
+        atoms.set_angle(Cnear,i,total_atoms-7,122.5,mask=mask)
+        atoms.set_distance(total_atoms-7,i,1.5290,fix=1,mask=mask)
+        atoms.set_dihedral(CnearC,Cnear,i,total_atoms-7,0.5,mask=mask)
+        mask[-7]=0
+        atoms.set_angle(Cnear,i,total_atoms-6,122.5,mask=mask)
+        atoms.set_distance(total_atoms-6,i,1.5290,fix=1,mask=mask)
+        atoms.set_dihedral(CnearC,Cnear,i,total_atoms-6,73.5,mask=mask)
+        mask[-6]=0
     atoms.set_angle(i,total_atoms-7,total_atoms-4,122.5,mask=mask)
     atoms.set_distance(total_atoms-4,total_atoms-7,1.0900,fix=1,mask=mask)
     atoms.set_dihedral(Cnear,i,total_atoms-7,total_atoms-4,5,mask=mask)
@@ -1197,6 +1225,95 @@ def ring3(atoms,i,state=1,strict='C'):
     atoms.set_angle(i,total_atoms-6,total_atoms-1,122.5,mask=mask)
     atoms.set_distance(total_atoms-1,total_atoms-6,1.0900,fix=1,mask=mask)
     atoms.set_dihedral(Cnear,i,total_atoms-6,total_atoms-1,140,mask=mask)
+    mask[-1]=0
+    for j in range(2):
+        try:
+            ring_element=strict[j+2]
+        except: 
+            continue
+        elements=atoms.get_chemical_symbols()
+        if ring_element=='O':
+            elements[-7+j]='O'
+            atoms.set_chemical_symbols(elements)
+            mask=[0]*total_atoms
+            mask[-7+j]=1
+            if j==0:
+                for l in range(10):
+                    atoms.set_distance(total_atoms-6,total_atoms-7,1.4100,mask=mask)
+                    atoms.set_distance(i,total_atoms-7,1.4100,mask=mask)
+            elif j==1:
+                for l in range(10):
+                    atoms.set_distance(i,total_atoms-6,1.4100,mask=mask)
+                    atoms.set_distance(total_atoms-7,total_atoms-6,1.4100,mask=mask)
+        elif ring_element=='S':
+            elements[-7+j]='S'
+            atoms.set_chemical_symbols(elements)
+            mask=[0]*total_atoms
+            mask[-7+j]=1
+            if j==0:
+                for l in range(10):
+                    atoms.set_distance(total_atoms-6,total_atoms-7,1.8100,mask=mask)
+                    atoms.set_distance(i,total_atoms-7,1.8100,mask=mask)
+            elif j==1:
+                for l in range(10):
+                    atoms.set_distance(i,total_atoms-6,1.8100,mask=mask)
+                    atoms.set_distance(total_atoms-7,total_atoms-6,1.8100,mask=mask)
+        elif ring_element=='N':
+            elements[-7+j]='N'
+            atoms.set_chemical_symbols(elements)
+            mask=[0]*total_atoms
+            mask[-7+j]=1
+            if j==0:
+                for l in range(10):
+                    atoms.set_distance(total_atoms-6,total_atoms-7,1.4480,mask=mask)
+                    atoms.set_distance(i,total_atoms-7,1.4480,mask=mask)
+                mask[-7]=0
+                mask[-3]=1
+                for l in range(10):
+                    atoms.set_angle(i,total_atoms-7,total_atoms-3,109.5,mask=mask)
+                    atoms.set_angle(total_atoms-6,total_atoms-7,total_atoms-3,109.5,mask=mask)
+                atoms.set_distance(total_atoms-3,total_atoms-7,1.0100,fix=1,mask=mask)
+                mask[-3]=0
+            elif j==1:
+                for l in range(10):
+                    atoms.set_distance(i,total_atoms-6,1.4480,mask=mask)
+                    atoms.set_distance(total_atoms-7,total_atoms-6,1.4480,mask=mask)
+                mask[-6]=0
+                mask[-1]=1
+                for l in range(10):
+                    atoms.set_angle(i,total_atoms-6,total_atoms-1,109.5,mask=mask)
+                    atoms.set_angle(total_atoms-7,total_atoms-6,total_atoms-1,109.5,mask=mask)
+                atoms.set_distance(total_atoms-1,total_atoms-6,1.0100,fix=1,mask=mask)
+                mask[-1]=0
+        mask[-7+j]=0
+    try:
+        if strict[1]=='N':
+            del atoms[-5]
+        else:
+            pass
+    except:
+        pass
+    deleted=[]
+    for j in range(2):
+        try:
+            ring_element=strict[j+2]
+        except: 
+            continue
+        if ring_element=='N':
+            if j+2==2:
+                deleted.append(total_atoms-4)
+            if j+2==3:
+                deleted.append(total_atoms-2)
+        else:
+            if j+2==2:
+                deleted.append(total_atoms-3)
+                deleted.append(total_atoms-4)
+            if j+2==3:
+                deleted.append(total_atoms-1)
+                deleted.append(total_atoms-2)
+    deleted.sort(reverse=True)
+    for d in deleted:
+        del atoms[d]
     return atoms
 
 def ring5(atoms,i,state=1,strict={1:'X'},shuffle=0):

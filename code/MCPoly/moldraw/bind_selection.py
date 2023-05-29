@@ -8,17 +8,17 @@ def bind_selection(ring_size,atoms,bond,state=[1,1],place=0,strict={1:'X'}, side
     '''This function will bind the ring onto a bond. 5 means adding a 5-membered-ring bound. 
     Adding a 6 in the front will make sure the conjugation of the ring.''' 
     
-    if ring_size==2:
+    if ring_size==2 or ring_size=='bind2':
         return bind2(atoms,bond,state)
-    elif ring_size==3:
+    elif ring_size==3 or ring_size=='bind3':
         return bind3(atoms,bond,state,strict)
-    elif ring_size==5:
+    elif ring_size==5 or ring_size=='bind5':
         return bind5(atoms,bond,state,strict,side,shuffle,less5,stable)
-    elif ring_size==6:
+    elif ring_size==6 or ring_size=='bind6':
         return bind6(atoms,bond,state,strict,side,shuffle,less5)
-    elif ring_size==65:
+    elif ring_size==65 or ring_size=='bindconj5':
         return bindconj5(atoms,bond,state,strict)
-    elif ring_size==66:
+    elif ring_size==66 or ring_size=='bindconj6':
         return bindconj6(atoms,bond,state,strict)
 
 def bind2(atoms,bond,state=[1,1]):

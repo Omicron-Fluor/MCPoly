@@ -13,6 +13,7 @@ orcadir = os.path.join(mydir, '..')#, 'orcaset')
 sys.path.append(orcadir)
 from orcaset.gui import gui as gui1
 from sscurve.gui import gui as gui2
+from moldraw.gui import gui as gui4
 
 mydir = os.path.dirname( __file__ )
 orcadir = os.path.join(mydir, '..', 'orcaset')
@@ -32,13 +33,14 @@ from mgui import mgui
 def vis():
     """
         The method to summon all four GUI functions.
-        You can see how to use by input 'MCPoly.orcaset.gui?'(Normal ORCA), 'MCPoly.orcaset.ssgui?' (Mechanical ORCA), 'MCPoly.orcaset.mgui?' (Multiple ORCA) and 'MCPoly.sscurve.gui?' (Stress-Strain Curve)
+        You can see how to use by input 'MCPoly.orcaset.gui?'(Normal ORCA), 'MCPoly.orcaset.ssgui?' (Mechanical ORCA), 'MCPoly.orcaset.mgui?' (Multiple ORCA), 'MCPoly.sscurve.gui?' (Stress-Strain Curve), 'MCPoly.status.gui?' (Energy Diagram) and 'MCPoly.moldraw.gui?' (Molecule Designer)..
     """
     screen1=widgets.Output()
     screen2=widgets.Output()
     screen3=widgets.Output()
     screen4=widgets.Output()
     screen5=widgets.Output()
+    screen6=widgets.Output()
     
     with screen1:
         gui1()
@@ -50,11 +52,13 @@ def vis():
         gui2()
     with screen5:
         gui3()
+    with screen6:
+        gui4()
     
-    tab_contents = ['Normal ORCA','Mechanical ORCA','Multiple ORCA','Stress-Strain Curve','Energy Diagram']
+    tab_contents = ['Normal ORCA','Mechanical ORCA','Multiple ORCA','Stress-Strain Curve','Energy Diagram','Molecule Designer']
     tab = widgets.Tab(style=dict(font_weight='bold'))
     #children = [widgets.Label(name,style=dict(font_weight='bold')) for name in tab_contents]
-    children = [screen1,screen2,screen3,screen4,screen5]
+    children = [screen1,screen2,screen3,screen4,screen5,screen6]
     tab.children=children
     tab.titles = tab_contents
     tab.layout = widgets.Layout(layout=widgets.Layout(width='50%'))
