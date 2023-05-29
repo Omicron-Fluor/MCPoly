@@ -6,7 +6,7 @@ Some methods to deal with some manipulation of computational chemistry, mostly a
 `MCPoly` is a Python library to make some steps of computational chemistry easier. It includes some functions of drawing molecule structures, creating proper .xyz , .inp , .mol and .data file, which specialised for using ORCA and LAMMPS, and some functions for researching the mechanical property of some polymers.
 
 ## Updated in v0.4.0 (29.05.23)
-BIG UPDATE: Molecule Designer GUI is included in this package. You can now use it to draw moleculea with 3D view at the same time.
+BIG UPDATE: Molecule Designer GUI is included in this package. You can now use it to draw molecule with 3D view at the same time.
 <img src="https://github.com/Omicron-Fluor/MCPoly/blob/main/reference/moldraw_gui.png">
 
 ## Updated in v0.3.0 (19.05.23)
