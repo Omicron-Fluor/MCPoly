@@ -6,7 +6,7 @@ from ase.io import read, write
 
 def replication(filename,x,xgap,y,ygap,z,zgap,absolute=False,startloc=[0,0,0],loc='./'):
     if absolute==True:
-        warnings.warn('Make sure you already all the overlaps of molecules!')
+        warnings.warn('Make sure you avoid all the overlaps of molecules!')
     opath=os.getcwd()
     os.chdir(loc)
     xloc=startloc[0]
