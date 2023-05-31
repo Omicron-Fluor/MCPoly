@@ -4,7 +4,7 @@ import warnings
 import math as m
 from ase.io import read, write
 
-def replication(filename,x,xgap,y,ygap,z,zgap,absolute=False,startloc=[0,0,0],loc='./'):
+def replication(filename,x,xgap,y,ygap,z,zgap,absolute=False,startloc=[0,0,0],loc='./',chain=False):
     if absolute==True:
         warnings.warn('Make sure you avoid all the overlaps of molecules!')
     opath=os.getcwd()
@@ -12,6 +12,7 @@ def replication(filename,x,xgap,y,ygap,z,zgap,absolute=False,startloc=[0,0,0],lo
     xloc=startloc[0]
     yloc=startloc[1]
     zloc=startloc[2]
+    all_x=[]
     k=0
     w1=0
     w2=0
@@ -116,6 +117,8 @@ def replication(filename,x,xgap,y,ygap,z,zgap,absolute=False,startloc=[0,0,0],lo
                     for i3 in range(z):
                         for i4 in range(len(l)):
                             f.write('{0} {1} {2} {3:.4f} {4:.5f} {5:.5f} {6:.5f}\n'.format(j,eval(l[i4][1]),eval(l[i4][2]),eval(l[i4][3]),eval(l[i4][-3])+(xd-real[0]+xgap)*i1-eval(x1[0]),eval(l[i4][-2])+(yd-real[1]+ygap)*i2-eval(y1[0]),eval(l[i4][-1])+(zd-real[2]+zgap)*i3-eval(z1[0])))
+                            if i1+i2+i3==0:
+                                all_x.append(eval(l[i4][-3]))
                             j=j+1
             l=[]
             j=1
@@ -133,7 +136,34 @@ def replication(filename,x,xgap,y,ygap,z,zgap,absolute=False,startloc=[0,0,0],lo
                 for i2 in range(y):
                     for i3 in range(z):
                         for i4 in range(len(l)):
-                            f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k))
+                            if chain==True:
+                                if i4==len(l)-1:
+                                    if all_x[eval(l[i4][2])-1]<=all_x[eval(l[i4][3])-1]:
+                                        if i1==0:
+                                            if eval(l[i4][2])>eval(l[i4][3])+eval(num)*k:
+                                                f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k+eval(num)*(x-1)*y*z),eval(l[i4][3])+eval(num)*k)
+                                            else:
+                                                f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k+eval(num)*(x-1)*y*z))
+                                        else:
+                                            if eval(l[i4][2])>eval(l[i4][3])+eval(num)*k:
+                                                f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k-eval(num)*y*z,eval(l[i4][3])+eval(num)*k))
+                                            else:
+                                                f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k-eval(num)*y*z))
+                                    elif all_x[eval(l[i4][2])-1]>all_x[eval(l[i4][3])-1]:
+                                        if i1==0:
+                                            if eval(l[i4][2])>eval(l[i4][3])+eval(num)*k:
+                                                f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k+eval(num)*(x-1)*y*z))
+                                            else:
+                                                f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k+eval(num)*(x-1)*y*z,eval(l[i4][3])+eval(num)*k))
+                                        else:
+                                            if eval(l[i4][2])>eval(l[i4][3])+eval(num)*k:
+                                                f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k-eval(num)*y*z))
+                                            else:
+                                                f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k-eval(num)*y*z,eval(l[i4][3])+eval(num)*k))
+                                else:
+                                    f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k))
+                            else:
+                                f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k))
                             j=j+1
                         k=k+1
             l=[]
@@ -800,7 +830,7 @@ class mould:
         self.atoms=atoms
         self.loc=loc
     
-    def cube(self,x,xgap,y,ygap,z,zgap,absolute=False,startloc=[0,0,0]):
+    def cube(self,x,xgap,y,ygap,z,zgap,absolute=False,startloc=[0,0,0],chain=False):
         """
     The method to create a box with replicated molecular, or create a crystal
     * * * * *
@@ -817,6 +847,8 @@ class mould:
     zgap: distance of nearest atoms between each molecule systems in z axis direction
     absolute: Use the distance between the molecule systems box instead of nearest atoms in xgap, ygap and zgap. The default is True.
     startloc: The location of the beginning the replicated system drawing. Mostly, it is minimum of x, y, z in molecule system.
+    chain: To connect chain by this function in x axis. The default is false.
+        TIPS: It can only alleviate the problem of connecting multiple polymer molecules, but to totally solve this problem, the best way is to get a single long polymer chain.
     Example:
         Input:
             from MCPoly.lmpset import mould
@@ -854,7 +886,7 @@ class mould:
             
             ...                                             ...
         """
-        return replication(self.atoms,x,xgap,y,ygap,z,zgap,absolute,startloc,self.loc)
+        return replication(self.atoms,x,xgap,y,ygap,z,zgap,absolute,startloc,self.loc,chain)
     
     def brick(self,x,xgap,y,ygap,z,zgap,xpattern='0',ypattern='0',zpattern='0',shuffle=0,absolute=False,startloc=[0,0,0]):
         """
