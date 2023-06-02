@@ -154,7 +154,7 @@ def DATAtoXYZ(file,loc='./',savename=''):
             w1=0
     f.close()
     molecule = Atoms(elements, positions=XYZs)
-    if savename='':
+    if savename=='':
         write(file+'.xyz',molecule)
     else:
         write(savename+'.xyz',molecule)
