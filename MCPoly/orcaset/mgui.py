@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import time as t
+from IPython import display
 
 mydir = os.path.dirname( __file__ )
 orcadir = os.path.join(mydir, '..', 'orcaset')
