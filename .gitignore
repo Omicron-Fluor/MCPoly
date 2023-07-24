@@ -1,0 +1,16 @@
+dist
+build
+src/stk.egg-info
+src/stk/_version.py
+
+**/__pycache__/
+
+**/.cache
+.mypy_cache
+*.ipynb_checkpoints
+**/.vscode
+
+# Some folders get created by tests.
+**/tests_output
+docs/build
+tests/failures.txt
