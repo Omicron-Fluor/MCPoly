@@ -8,6 +8,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import warnings
 import sys
+from IPython import display
 
 mydir = os.path.dirname( __file__ )
 statusdir = os.path.join(mydir, '..', 'status')
