@@ -4,278 +4,310 @@ import warnings
 import math as m
 from ase.io import read, write
 
-def replication(filename,x,xgap,y,ygap,z,zgap,absolute=False,startloc=[0,0,0],loc='./'):
-    if absolute==True:
+def replication(
+        filename, x, xgap, y, ygap, z, zgap,
+        absolute = False, startloc=[0,0,0], loc='./'):
+    if absolute == True:
         warnings.warn('Make sure you already all the overlaps of molecules!')
-    opath=os.getcwd()
+    opath = os.getcwd()
     os.chdir(loc)
-    xloc=startloc[0]
-    yloc=startloc[1]
-    zloc=startloc[2]
-    k=0
-    w1=0
-    w2=0
-    w3=0
-    w4=0
-    w5=0
-    l=[]
-    real=[0,0,0]
+    xloc = startloc[0]
+    yloc = startloc[1]
+    zloc = startloc[2]
+    k = 0
+    w1 = 0
+    w2 = 0
+    w3 = 0
+    w4 = 0
+    w5 = 0
+    l = []
+    real = [0,0,0]
     try:
-        f = open('{0}_{1}{2}{3}.data'.format(filename,x,y,z),'x')
+        f = open('{0}_{1}{2}{3}.data'.format(filename,x,y,z), 'x')
     except:
-        f = open('{0}_{1}{2}{3}.data'.format(filename,x,y,z),'w')
-    inp = open('{0}.data'.format(filename),'r')
+        f = open('{0}_{1}{2}{3}.data'.format(filename,x,y,z), 'w')
+    inp = open('{0}.data'.format(filename), 'r')
     for line in inp:
-        a1=re.search(r' atoms',line)
-        a2=re.search(r' bonds',line)
-        a3=re.search(r' angles',line)
-        a4=re.search(r' dihedrals',line)
-        a5=re.search(r' impropers',line)
-        a6=re.search(r' xlo xhi',line)
-        a7=re.search(r' ylo yhi',line)
-        a8=re.search(r' zlo zhi',line)
-        c1=re.search('Atoms',line)
-        c2=re.search('Bonds',line)
-        c3=re.search('Angles',line)
-        c4=re.search('Dihedrals',line)
-        c5=re.search('Impropers',line)
+        a1 = re.search(r' atoms', line)
+        a2 = re.search(r' bonds', line)
+        a3 = re.search(r' angles', line)
+        a4 = re.search(r' dihedrals', line)
+        a5 = re.search(r' impropers', line)
+        a6 = re.search(r' xlo xhi', line)
+        a7 = re.search(r' ylo yhi', line)
+        a8 = re.search(r' zlo zhi', line)
+        c1 = re.search('Atoms', line)
+        c2 = re.search('Bonds', line)
+        c3 = re.search('Angles', line)
+        c4 = re.search('Dihedrals', line)
+        c5 = re.search('Impropers', line)
         if a1:
-            b1=re.search(r'[0-9]+',line)
-            f.write('{0} atoms\n'.format(eval(b1.group(0))*x*y*z))
-            num=b1.group(0)
+            b1 = re.search(r'[0-9]+', line)
+            f.write('{0} atoms\n'.format(eval(b1.group(0)) * x * y * z))
+            num = b1.group(0)
         elif a2:
-            b2=re.search(r'[0-9]+',line)
-            f.write('{0} bonds\n'.format(eval(b2.group(0))*x*y*z))
-            num2=b2.group(0)
+            b2 = re.search(r'[0-9]+', line)
+            f.write('{0} bonds\n'.format(eval(b2.group(0)) * x * y * z))
+            num2 = b2.group(0)
         elif a3:
-            b3=re.search(r'[0-9]+',line)
-            f.write('{0} angles\n'.format(eval(b3.group(0))*x*y*z))
-            num3=b3.group(0)
+            b3 = re.search(r'[0-9]+', line)
+            f.write('{0} angles\n'.format(eval(b3.group(0)) * x * y * z))
+            num3 = b3.group(0)
         elif a4:
-            b4=re.search(r'[0-9]+',line)
-            f.write('{0} dihedrals\n'.format(eval(b4.group(0))*x*y*z))
-            num4=b4.group(0)
+            b4 = re.search(r'[0-9]+', line)
+            f.write('{0} dihedrals\n'.format(eval(b4.group(0)) * x * y * z))
+            num4 = b4.group(0)
         elif a5:
-            b5=re.search(r'[0-9]+',line)
-            f.write('{0} impropers\n'.format(eval(b5.group(0))*x*y*z))
-            num5=b5.group(0)
+            b5 = re.search(r'[0-9]+', line)
+            f.write('{0} impropers\n'.format(eval(b5.group(0)) * x * y * z))
+            num5 = b5.group(0)
         elif a6:
-            x1=re.findall(r'\-?[0-9]+\.?[0-9]*',line)
-            xd=eval(x1[1])-eval(x1[0])
-            if absolute==True:
-                real[0]=xd-1/x*xgap
-            f.write('{0:.5f} {1:.5f} xlo xhi\n'.format(xloc,xloc+(xd-real[0])*x+xgap*(x-1)))
-            if absolute==True:
-                real[0]=xd
+            x1 = re.findall(r'\-?[0-9]+\.?[0-9]*', line)
+            xd = eval(x1[1]) - eval(x1[0])
+            if absolute == True:
+                real[0] = xd - 1/x*xgap
+            f.write('{0:.5f} {1:.5f} xlo xhi\n'.format(xloc, 
+                                                       xloc + (xd-real[0])*x + xgap*(x-1)))
+            if absolute == True:
+                real[0] = xd
         elif a7:
-            y1=re.findall(r'\-?[0-9]+\.?[0-9]*',line)
-            yd=eval(y1[1])-eval(y1[0])
-            if absolute==True:
-                real[1]=yd-1/y*ygap
-            f.write('{0:.5f} {1:.5f} ylo yhi\n'.format(yloc,yloc+(yd-real[1])*y+ygap*(y-1)))
-            if absolute==True:
-                real[1]=yd
+            y1 = re.findall(r'\-?[0-9]+\.?[0-9]*', line)
+            yd = eval(y1[1]) - eval(y1[0])
+            if absolute == True:
+                real[1] = yd - 1/y*ygap
+            f.write('{0:.5f} {1:.5f} ylo yhi\n'.format(yloc,
+                                                       yloc + (yd-real[1])*y + ygap*(y-1)))
+            if absolute == True:
+                real[1] = yd
         elif a8:
-            z1=re.findall(r'\-?[0-9]+\.?[0-9]*',line)
-            zd=eval(z1[1])-eval(z1[0])
-            if absolute==True:
-                real[2]=zd-1/z*zgap
-            f.write('{0:.5f} {1:.5f} zlo zhi\n'.format(zloc,zloc+(zd-real[2])*z+zgap*(z-1)))
-            if absolute==True:
-                real[2]=zd
+            z1 = re.findall(r'\-?[0-9]+\.?[0-9]*',line)
+            zd = eval(z1[1])-eval(z1[0])
+            if absolute == True:
+                real[2] = zd - 1/z*zgap
+            f.write('{0:.5f} {1:.5f} zlo zhi\n'.format(zloc,
+                                                       zloc + (zd-real[2])*z + zgap*(z-1)))
+            if absolute == True:
+                real[2] = zd
         elif c1:
-            w1=1
+            w1 = 1
             f.write(line)
             f.write('\n')
         elif c2:
-            w2=1
+            w2 = 1
             f.write(line)
             f.write('\n')
         elif c3:
-            w3=1
+            w3 = 1
             f.write(line)
             f.write('\n')
         elif c4:
-            w4=1
+            w4 = 1
             f.write(line)
             f.write('\n')
         elif c5:
-            w5=1
+            w5 = 1
             f.write(line)
             f.write('\n')
-        elif w1==1:
-            l1=re.findall(r'\-?[0-9]+\.?[0-9]*',line)
-            if len(l1)>=6:
+        elif w1 == 1:
+            l1=re.findall(r'\-?[0-9]+\.?[0-9]*', line)
+            if len(l1) >= 6:
                 l.append(l1)
-                if l1[0]==num:
-                    w1=2
-                    j=1
-        elif w1==2:
+                if l1[0] == num:
+                    w1 = 2
+                    j = 1
+        elif w1 == 2:
             for i1 in range(x):
                 for i2 in range(y):
                     for i3 in range(z):
                         for i4 in range(len(l)):
-                            f.write('{0} {1} {2} {3:.4f} {4:.5f} {5:.5f} {6:.5f}\n'.format(j,eval(l[i4][1]),eval(l[i4][2]),eval(l[i4][3]),eval(l[i4][-3])+(xd-real[0]+xgap)*i1-eval(x1[0]),eval(l[i4][-2])+(yd-real[1]+ygap)*i2-eval(y1[0]),eval(l[i4][-1])+(zd-real[2]+zgap)*i3-eval(z1[0])))
-                            j=j+1
-            l=[]
-            j=1
-            w1=0
+                            f.write('{0} {1} {2} {3:.4f} {4:.5f} {5:.5f} {6:.5f}\n'.format(j,
+                                                                                           eval(l[i4][1]), eval(l[i4][2]), eval(l[i4][3]),
+                                                                                           eval(l[i4][-3]) + (xd-real[0]+xgap)*i1 - eval(x1[0]),
+                                                                                           eval(l[i4][-2]) + (yd-real[1]+ygap)*i2 - eval(y1[0]),
+                                                                                           eval(l[i4][-1]) + (zd-real[2]+zgap)*i3 - eval(z1[0])))
+                            j = j + 1
+            l = []
+            j = 1
+            w1 = 0
             f.write('\n')
-        elif w2==1:
-            l1=re.findall(r'[0-9]+',line)
-            if len(l1)==4:
+        elif w2 == 1:
+            l1 = re.findall(r'[0-9]+', line)
+            if len(l1) == 4:
                 l.append(l1)
-                if l1[0]==num2:
-                    w2=2
-                    j=1
-        elif w2==2:
+                if l1[0] == num2:
+                    w2 = 2
+                    j = 1
+        elif w2 == 2:
             for i1 in range(x):
                 for i2 in range(y):
                     for i3 in range(z):
                         for i4 in range(len(l)):
-                            f.write('{0} {1} {2} {3}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k))
-                            j=j+1
-                        k=k+1
-            l=[]
-            j=1
-            w2=0
-            k=0
+                            f.write('{0} {1} {2} {3}\n'.format(j, eval(l[i4][1]), 
+                                                               eval(l[i4][2]) + eval(num) * k,
+                                                               eval(l[i4][3]) + eval(num) * k))
+                            j = j + 1
+                        k = k + 1
+            l = []
+            j = 1
+            w2 = 0
+            k = 0
             f.write('\n')
-        elif w3==1:
-            l1=re.findall(r'[0-9]+',line)
-            if len(l1)==5:
+        elif w3 == 1:
+            l1 = re.findall(r'[0-9]+',line)
+            if len(l1) == 5:
                 l.append(l1)
-                if l1[0]==num3:
-                    w3=2
-                    j=1
-        elif w3==2:
+                if l1[0] == num3:
+                    w3 = 2
+                    j = 1
+        elif w3 == 2:
             for i1 in range(x):
                 for i2 in range(y):
                     for i3 in range(z):
                         for i4 in range(len(l)):
-                            f.write('{0} {1} {2} {3} {4}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k,eval(l[i4][4])+eval(num)*k))
-                            j=j+1
-                        k=k+1
-            l=[]
-            j=1
-            k=0
-            w3=0
+                            f.write('{0} {1} {2} {3} {4}\n'.format(j, eval(l[i4][1]),
+                                                                   eval(l[i4][2]) + eval(num)*k, 
+                                                                   eval(l[i4][3]) + eval(num)*k, 
+                                                                   eval(l[i4][4]) + eval(num)*k))
+                            j = j + 1
+                        k = k + 1
+            l = []
+            j = 1
+            k = 0
+            w3 = 0
             f.write('\n')
-        elif w4==1:
-            l1=re.findall(r'[0-9]+',line)
-            if len(l1)==6:
+        elif w4 == 1:
+            l1 = re.findall(r'[0-9]+', line)
+            if len(l1) == 6:
                 l.append(l1)
-                if l1[0]==num4:
-                    w4=2
-                    j=1
-        elif w4==2:
+                if l1[0] == num4:
+                    w4 = 2
+                    j = 1
+        elif w4 == 2:
             for i1 in range(x):
                 for i2 in range(y):
                     for i3 in range(z):
                         for i4 in range(len(l)):
-                            f.write('{0} {1} {2} {3} {4} {5}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k,eval(l[i4][4])+eval(num)*k,eval(l[i4][5])+eval(num)*k))
-                            j=j+1
-                        k=k+1
-            l=[]
-            j=1
-            k=0
-            w4=0
+                            f.write('{0} {1} {2} {3} {4} {5}\n'.format(j, eval(l[i4][1]), 
+                                                                       eval(l[i4][2]) + eval(num)*k, 
+                                                                       eval(l[i4][3]) + eval(num)*k, 
+                                                                       eval(l[i4][4]) + eval(num)*k, 
+                                                                       eval(l[i4][5]) + eval(num)*k))
+                            j = j + 1
+                        k = k + 1
+            l = []
+            j = 1
+            k = 0
+            w4 = 0
             f.write('\n')
-        elif w5==1:
-            l1=re.findall(r'[0-9]+',line)
-            if len(l1)==6:
+        elif w5 == 1:
+            l1 = re.findall(r'[0-9]+', line)
+            if len(l1) == 6:
                 l.append(l1)
-                if l1[0]==num5:
-                    w5=2
-                    j=1
-        elif w5==2:
+                if l1[0] == num5:
+                    w5 = 2
+                    j = 1
+        elif w5 == 2:
             for i1 in range(x):
                 for i2 in range(y):
                     for i3 in range(z):
                         for i4 in range(len(l)):
-                            f.write('{0} {1} {2} {3} {4} {5}\n'.format(j,eval(l[i4][1]),eval(l[i4][2])+eval(num)*k,eval(l[i4][3])+eval(num)*k,eval(l[i4][4])+eval(num)*k,eval(l[i4][5])+eval(num)*k))
-                            j=j+1
-                        k=k+1
-            l=[]
-            j=1
-            k=0
-            w4=0
+                            f.write('{0} {1} {2} {3} {4} {5}\n'.format(j, eval(l[i4][1]),
+                                                                       eval(l[i4][2]) + eval(num)*k,
+                                                                       eval(l[i4][3]) + eval(num)*k,
+                                                                       eval(l[i4][4]) + eval(num)*k,
+                                                                       eval(l[i4][5]) + eval(num)*k))
+                            j = j + 1
+                        k = k + 1
+            l = []
+            j = 1
+            k = 0
+            w4 = 0
             f.write('\n')
         else:
             f.write(line)
     f.close()
     os.chdir(opath)
 
-def replication_brick(filename,x,xgap,y,ygap,z,zgap,xpattern='0',ypattern='0',zpattern='0',shuffle=0,absolute=False,startloc=[0,0,0],loc='./'):
-    if xpattern=='0' and ypattern=='0' and zpattern=='0':
+def replication_brick(filename, x, xgap, y, ygap, z, zgap, xpattern='0', 
+                      ypattern='0', zpattern='0', shuffle=0,
+                      absolute=False, startloc=[0,0,0], loc='./'):
+    if xpattern == '0' and ypattern == '0' and zpattern == '0':
         warnings.warn("You didn't set any patterns!")
-    xloc=startloc[0]
-    yloc=startloc[1]
-    zloc=startloc[2]
-    opath=os.getcwd()
+    xloc = startloc[0]
+    yloc = startloc[1]
+    zloc = startloc[2]
+    opath = os.getcwd()
     os.chdir(loc)
-    k=0
-    w1=0
-    w2=0
-    w3=0
-    w4=0
-    w5=0
-    half=0.0
-    l=[]
-    real=[0,0,0]
-    pattern=''
-    if xpattern=='y':
-        pattern='xy'
-    if xpattern=='z':
-        pattern='xz'
-    if ypattern=='x':
-        pattern='yx'
-    if ypattern=='z':
-        pattern='yz'
-    if zpattern=='x':
-        pattern='zx'
-    if zpattern=='y':
-        pattern='zy'
+    k = 0
+    w1 = 0
+    w2 = 0
+    w3 = 0
+    w4 = 0
+    w5 = 0
+    half = 0.0
+    l = []
+    real = [0, 0, 0]
+    pattern = ''
+    if xpattern == 'y':
+        pattern = 'xy'
+    if xpattern == 'z':
+        pattern = 'xz'
+    if ypattern == 'x':
+        pattern = 'yx'
+    if ypattern == 'z':
+        pattern = 'yz'
+    if zpattern == 'x':
+        pattern = 'zx'
+    if zpattern == 'y':
+        pattern = 'zy'
     try:
-        f = open('{0}_{1}{2}{3}_brick{4}.data'.format(filename,x,y,z,pattern),'x')
+        f = open('{0}_{1}{2}{3}_brick{4}.data'.format(filename,
+                                                      x, y, z, pattern), 'x')
     except:
-        f = open('{0}_{1}{2}{3}_brick{4}.data'.format(filename,x,y,z,pattern),'w')
-    inp = open('{0}.data'.format(filename),'r')
+        f = open('{0}_{1}{2}{3}_brick{4}.data'.format(filename, 
+                                                      x, y, z, pattern), 'w')
+    inp = open('{0}.data'.format(filename), 'r')
     for line in inp:
-        i1,i2,i3=None,None,None
-        a1=re.search(r' atoms',line)
-        a2=re.search(r' bonds',line)
-        a3=re.search(r' angles',line)
-        a4=re.search(r' dihedrals',line)
-        a5=re.search(r' impropers',line)
-        a6=re.search(r' xlo xhi',line)
-        a7=re.search(r' ylo yhi',line)
-        a8=re.search(r' zlo zhi',line)
-        c1=re.search('Atoms',line)
-        c2=re.search('Bonds',line)
-        c3=re.search('Angles',line)
-        c4=re.search('Dihedrals',line)
-        c5=re.search('Impropers',line)
+        i1, i2, i3 = None, None, None
+        a1 = re.search(r' atoms', line)
+        a2 = re.search(r' bonds', line)
+        a3 = re.search(r' angles', line)
+        a4 = re.search(r' dihedrals', line)
+        a5 = re.search(r' impropers', line)
+        a6 = re.search(r' xlo xhi', line)
+        a7 = re.search(r' ylo yhi', line)
+        a8 = re.search(r' zlo zhi', line)
+        c1 = re.search('Atoms', line)
+        c2 = re.search('Bonds', line)
+        c3 = re.search('Angles', line)
+        c4 = re.search('Dihedrals', line)
+        c5 = re.search('Impropers', line)
         if a1:
-            b1=re.search(r'[0-9]+',line)
-            if xpattern!='0':
-                if xpattern=='y':
-                    axpattern='z'
+            b1 = re.search(r'[0-9]+', line)
+            if xpattern != '0':
+                if xpattern == 'y':
+                    axpattern = 'z'
                 else:
-                    axpattern='y'
-                f.write('{0:.0f} atoms\n'.format(eval(b1.group(0))*(x*y*z-int(x/2)*eval(axpattern)-int(eval(axpattern)/2)*(eval(axpattern)%2))))
-            if ypattern!='0':
-                if ypattern=='z':
-                    aypattern='x'
+                    axpattern = 'y'
+                f.write('{0:.0f} atoms\n'.format(
+                    eval(b1.group(0)) * (x*y*z-int(x/2) * eval(axpattern)
+                    - int(eval(axpattern)/2) * (eval(axpattern)%2))))
+            if ypattern != '0':
+                if ypattern == 'z':
+                    aypattern = 'x'
                 else:
-                    aypattern='z'
-                f.write('{0:.0f} atoms\n'.format(eval(b1.group(0))*(x*y*z-int(y/2)*eval(aypattern)-int(eval(aypattern)/2)*(eval(aypattern)%2))))
-            if zpattern!='0':
-                if zpattern=='y':
-                    azpattern='x'
+                    aypattern = 'z'
+                f.write('{0:.0f} atoms\n'.format(
+                    eval(b1.group(0)) * (x*y*z-int(y/2) * eval(aypattern)
+                    - int(eval(aypattern)/2) * (eval(aypattern)%2))))
+            if zpattern != '0':
+                if zpattern == 'y':
+                    azpattern = 'x'
                 else:
-                    azpattern='y'
-                f.write('{0:.0f} atoms\n'.format(eval(b1.group(0))*(x*y*z-int(z/2)*eval(azpattern)-int(eval(azpattern)/2)*(eval(azpattern)%2))))
+                    azpattern = 'y'
+                f.write('{0:.0f} atoms\n'.format(
+                    eval(b1.group(0)) * (x*y*z-int(z/2) * eval(azpattern) 
+                    - int(eval(azpattern)/2) * (eval(azpattern)%2))))
             num=b1.group(0)
         elif a2:
             b2=re.search(r'[0-9]+',line)
