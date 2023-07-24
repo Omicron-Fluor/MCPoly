@@ -4,6 +4,7 @@ import os
 import re
 from ase.io import read
 from ase import Atoms
+from IPython import display
 
 mydir = os.path.dirname( __file__ )
 orcadir = os.path.join(mydir, '..', 'orcaset')
