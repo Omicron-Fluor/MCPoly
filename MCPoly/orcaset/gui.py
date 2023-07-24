@@ -9,6 +9,7 @@ import sys
 import os
 import re
 from .view3dchoose import view3dchoose
+from IPython import display
 
 mydir = os.path.dirname( __file__ )
 statusdir = os.path.join(mydir, '..', 'status')
