@@ -1,7 +1,14 @@
 dist
 build
 MCPoly/*
-MCPoly//*
+MCPoly/lmpset/*
+MCPoly/moldraw/*
+MCPoly/orcaset/*
+MCPoly/sscurve/*
+MCPoly/status/*
+MCPoly/version/*
+MCPoly/vis/*
+MCPoly/view3d/*
 
 **/__pycache__/
 
