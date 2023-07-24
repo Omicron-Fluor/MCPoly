@@ -1,7 +1,7 @@
 dist
 build
-src/stk.egg-info
-src/stk/_version.py
+MCPoly/*
+MCPoly//*
 
 **/__pycache__/
 
