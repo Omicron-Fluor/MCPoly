@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from ipywidgets import interact
 import ipywidgets as iw
 import py3Dmol
+from IPython import display
 from rdkit import Chem
 from rdkit.Chem.Draw import IPythonConsole
 from rdkit.Chem import rdDetermineBonds
