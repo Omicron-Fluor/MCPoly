@@ -26,7 +26,8 @@ install_requires = [
     'seaborn>=0.11.0',
     'py3dmol>=2.0.0',
     'rdkit>=2022.9.3',
-    'scikit-learn>=1.1.2'
+    'scikit-learn>=1.1.2',
+    'ipython>=6.1.0'
 ]
 
 if __name__ == '__main__':
