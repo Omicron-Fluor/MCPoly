@@ -1,25 +1,28 @@
-from .XYZtoINP import XYZtoINP
-from .orca import orca
 import time as t
+from .XyzToInp import XyzToInp
+from .orca import orca
 
 class multiorca:
     """
     The method to calculate several .inp files in one document consecutively by ORCA.
-    multiorca([file1,file2,file3,...],loc)
+    multiorca([file1, file2, file3, ...], loc)
     file: Your .xyz file name.
     loc: File Location. The default is your current location.
     You can get the further information by .run.
     """
-    def __init__(self,files=[],loc='./'):
+    def __init__(self, files=[], loc='./'):
         self.loc=loc
         self.files=files
         
-    def run(self,orcaloc='./',method='B3LYP',basis_set='def2-SVP',opt=False,freq=False,scan=False,external_force=False,ts=False,aim=[0,0],stretch=-1,scanstep=10,strain=-1,maxiter=-1,maxcore=-1,corenum=1,electron=0,state=1):
+    def run(self, orcaloc='./', method='B3LYP', basis_set='def2-SVP', opt=False,\
+            freq=False, scan=False, external_force=False, ts=False,\
+            aim=[0, 0], stretch=-1, scanstep=10, strain=-1, maxiter=-1,\
+            maxcore=-1, corenum=1, electron=0, state=1):
         """
     The method to calculate several .inp files by ORCA and save file at the same location with .inp files.
-    run(self,orcaloc='./',method='B3LYP',basis_set='def2-SVP',opt=False,freq=False,scan=False,external_force=False,ts=False,aim=[0,0],stretch=-1,scanstep=10,strain=-1,maxiter=-1,maxcore=-1,corenum=1,electron=0,state=1)
+    run(self, orcaloc='./', method='B3LYP', basis_set='def2-SVP', opt=False, freq=False, scan=False, external_force=False, ts=False, aim=[0, 0], stretch=-1, scanstep=10, strain=-1, maxiter=-1, maxcore=-1, corenum=1, electron=0, state=1)
     orcaloc: Your location of ORCA.
-             If you have set ORCA from https://www.orcasoftware.de/tutorials_orca/first_steps/trouble_install.html#path-variable,
+             If you have set ORCA from https://www.orcasoftware.de/tutorials_orca/first_steps/trouble_install.html#path-variable, 
              you can skip this key word.
     method: Your semiempirical/ab initio/DFT calculation methods. The default is B3LYP.
     basis_set: Your basis sets. The default is def2-SVP.
@@ -48,10 +51,10 @@ class multiorca:
     Example:
         Input:
             from MCPoly.orcaset import multiorca
-            files=multiorca(['Atom1','Atom2'])
+            files=multiorca(['Atom1', 'Atom2'])
             orcaloc='./MCPoly/orca/'
-            files.run(orcaloc=orcaloc,method='B3LYP',basis_set='def2-TZVP',opt=True,freq=True,\
-                        maxcore=4096,corenum=8)
+            files.run(orcaloc=orcaloc, method='B3LYP', basis_set='def2-TZVP', opt=True, freq=True,\
+                        maxcore=4096, corenum=8)
         Output:
             1. Atom1.xyz [Tue Apr 25 15:26:50 2023]
             <<COMMAND LINES>>
@@ -61,10 +64,13 @@ class multiorca:
             <<COMMAND LINES>>
             Program Completed.[Tue Apr 25 16:21:55 2023]
         """
-        i=1
+        i = 1
         for file in self.files:
             print('{0}. '.format(i)+file+'.xyz '+'[{0}]'.format(t.ctime(t.time())))
-            XYZtoINP(file,fileloc=self.loc,saveloc=self.loc,method=method,basis_set=basis_set,opt=opt,freq=freq,scan=scan,external_force=external_force,ts=ts,aim=aim,stretch=stretch,
-                     scanstep=scanstep,strain=strain,maxiter=maxiter,maxcore=maxcore,corenum=corenum,electron=electron,state=state)
-            orca(file,orcaloc,self.loc,self.loc)
-            i=i+1
+            XyzToInp(file, fileloc=self.loc, saveloc=self.loc, method=method,\
+                     basis_set=basis_set, opt=opt, freq=freq, scan=scan,\
+                     external_force=external_force, ts=ts, aim=aim, stretch=stretch,\
+                     scanstep=scanstep, strain=strain, maxiter=maxiter, maxcore=maxcore,\
+                     corenum=corenum, electron=electron, state=state)
+            orca(file, orcaloc, self.loc, self.loc)
+            i = i + 1

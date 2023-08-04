@@ -1,16 +1,17 @@
 import os
 import re
+import warnings
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from .YModulus import YModulus
-import warnings
 
-def multiple(allname='Result',polymers=[],loc='./',savefig=True,savedata=True,needYM=True,xx=False):
+def multiple(allname='Result', polymers=[], loc='./', savefig=True,\
+             savedata=True, needYM=True, xx=False):
     """
     The method to create a Stress-Strain Curve chart and .csv relevant data file of all polymers you choose.
     multiple(allname='Results', polymers=[file1, file2, file3, ...], loc='./', savefig=True, savedata=True, needYM=True))
-    allname: The name of your saved stress-strain curve chart and data file.
+    allname: The name of your saved Stress-Strain curve chart and data file.
     polymers: Your selected polymer names on your file. The default is all polymers which has _Results.txt file in the location. 
     loc: File Location. The default is your current location.
     savefig, savedata: To show if you want to save the chart and .csv curve. The default is True.
@@ -48,38 +49,39 @@ def multiple(allname='Result',polymers=[],loc='./',savefig=True,savedata=True,ne
             NaN                        29.516401             23.478160  NaN-> Young's Modulus
     TIPS: This function only depends on _Results.txt file, not .mol, .inp, .out, .xyz files.
     """
-    opath=os.getcwd()
-    if polymers==[]:
+    opath = os.getcwd()
+    if polymers == []:
         for path in os.listdir(loc):
             if os.path.isfile(os.path.join(loc, path)):
-                a=re.search('_Result.txt', path)
+                a = re.search('_Result.txt', path)
                 if a:
                     polymers.append(path[:-11])            
     print(polymers)
     
     os.chdir(loc)
     try:
-        f=open('ot.txt','x')
+        f = open('ot.txt','x')
     except:
-        f=open('ot.txt','w')
+        f = open('ot.txt','w')
     
-    ym=[None]
-    name=[]
-    i=0
+    ym = [None]
+    name = []
+    i = 0
     
-    site=[]
+    site = []
 
     for polymer in polymers:
-        polymer=polymer+'_Result.txt'
+        polymer = polymer + '_Result.txt'
         try:
-            datum=pd.read_csv(polymer)
+            datum = pd.read_csv(polymer)
         except:
             warnings.warn("'{0}' is not found.".format(polymer))
             continue
         try:
-            datum=datum[:].sort_values(by=['Strain Length(%)'])
+            datum = datum[:].sort_values(by=['Strain Length(%)'])
         except:
-            warnings.warn('{0} is not the file aboue stress-strain curve.'.format(polymer))
+            warnings.warn('{0} is not the file about'.format(polymer)
+                          + 'stress-strain curve.')
             continue
         for num in datum['Stress Force(nN)'][:-1]:
             if num not in site:
@@ -90,49 +92,52 @@ def multiple(allname='Result',polymers=[],loc='./',savefig=True,savedata=True,ne
         f.write('{0:.3f}\n'.format(num))
     f.close()
     
-    ot=pd.read_csv('ot.txt')
+    ot = pd.read_csv('ot.txt')
     for polymer in polymers:
-        polymer=polymer+'_Result.txt'
+        polymer = polymer + '_Result.txt'
         try:
-            datum=pd.read_csv(polymer)
+            datum = pd.read_csv(polymer)
         except:
             warnings.warn("'{0}' is not found.".format(polymer))
             continue
-        datum=datum[:].sort_values(by=['Strain Length(%)'])
-        if xx==False:
-            ax=plt.plot(datum['Strain Length(%)'][:-1],datum['Stress Force(nN)'][:-1],'*-')
-        if needYM==True:
+        datum = datum[:].sort_values(by=['Strain Length(%)'])
+        if xx == False:
+            ax = plt.plot(datum['Strain Length(%)'][:-1],\
+                          datum['Stress Force(nN)'][:-1],'*-')
+        if needYM == True:
             ym.append(YModulus(polymer))
-        datum=datum.rename(columns={'Strain Length(%)':'Strain Length ({0})'.format(polymer[:-11])})
-        ot=pd.merge_ordered(ot, datum[:-1], fill_method="ffill" , left_by="Stress Force(nN)")
+        datum = datum.rename(columns={
+            'Strain Length(%)':'Strain Length ({0})'.format(polymer[:-11])})
+        ot = pd.merge_ordered(ot, datum[:-1], fill_method="ffill",\
+                              left_by="Stress Force(nN)")
         name.append(polymer[:-11])
-        i=i+1
+        i = i + 1
     
-    if needYM==True:
-        al=pd.DataFrame(data=ym, index=ot.columns, columns=["Young's Modulus"])
-        al=al.T
-    #print(al)
-        ot=pd.concat([ot,al])
-    ot=ot.set_index('Stress Force(nN)')
+    if needYM == True:
+        al = pd.DataFrame(data=ym, index=ot.columns, columns=["Young's Modulus"])
+        al = al.T
+        #print(al)
+        ot = pd.concat([ot,al])
+    ot = ot.set_index('Stress Force(nN)')
     display(ot)
-    if savedata==True:
+    if savedata == True:
         ot.to_csv('{0}.csv'.format(allname))
     
-    if xx==False:
+    if xx == False:
         #ax = sns.scatterplot(data=ot, alpha=0.8)
-        #ax.set_ylabels='Strain Length(%)'
+        #ax.set_ylabels = 'Strain Length(%)'
         #_ = plt.title('Stress-Strain Curve')
         #bx = sns.relplot(data=ot, kind="line", alpha=0.5)
-        #bx.set_ylabels='Strain Length(%)'
+        #bx.set_ylabels = 'Strain Length(%)'
         #ax.legend(bbox_to_anchor=[1.1,0.9])
         plt.xlabel('Strain Length(%)')
         plt.ylabel('Stress Force(nN)')
         plt.legend(name,bbox_to_anchor=[1.1,0.9])
         _ = plt.title('Stress-Strain Curve')
         
-    if savefig==True:
-        plt.savefig('{0}.png'.format(allname),bbox_inches='tight')
-    if xx==False:
+    if savefig == True:
+        plt.savefig('{0}.png'.format(allname), bbox_inches='tight')
+    if xx == False:
         plt.show()
     
     os.system('rm ot.txt')

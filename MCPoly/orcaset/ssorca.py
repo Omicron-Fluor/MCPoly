@@ -1,7 +1,7 @@
 import os
 import re
 import sys
-from .XYZtoINP import XYZtoINP
+from .XyzToInp import XyzToInp
 from .orca import orca
 from ase.io import read
 import time as t
@@ -11,14 +11,12 @@ statusdir = os.path.join(mydir, '..', 'status')
 sys.path.append(statusdir)
 from status import status
 
-def checkbroken(file,strain,forcestep,aim):
-    if strain<=forcestep or strain<=1:
-        return 0
-    atoms=read(file+'_{0:.3f}.xyz'.format(strain))
-    atoms0=read(file+'_{0:.3f}.xyz'.format(strain-forcestep))
-    d=atoms.get_distance(aim[0],aim[1])
-    d0=atoms0.get_distance(aim[0],aim[1])
-    if d/d0>=1.6 or d/d0<=0.6:
+def checkbroken(distance, force):
+    long1 = abs(distance[-2] - distance[-1])
+    long2 = abs(distance[-3] - distance[-2])
+    mul1 = abs(force[-2] - force[-1])
+    mul2 = abs(force[-3] - force[-2])
+    if long1 / long2 >= 10 * mul1 / mul2:
         return 1
     else:
         return 0
@@ -26,21 +24,23 @@ def checkbroken(file,strain,forcestep,aim):
 class ssorca:
     """
     The method to calculate .inp file with growing external force in one document consecutively by ORCA.
-    ssorca(file,loc)
+    ssorca(file, loc)
     file: Your .xyz file name.
     loc: File Location. The default is your current location.
     You can get the further information by .run.
     """
-    def __init__(self,file,loc='./'):
+    def __init__(self, file, loc='./'):
         self.loc=loc
         self.file=file
         
-    def run(self,orcaloc='./',method='B3LYP',basis_set='def2-SVP',freq=False,aim=[0,0],strain=0,forcestep={0:1},maxiter=-1,maxcore=-1,corenum=1,electron=0,state=1):
+    def run(self, orcaloc='./', method='B3LYP', basis_set='def2-SVP', freq=False,\
+            aim=[0, 0], strain=0, forcestep={0:1}, maxiter=-1,\
+            maxcore=-1, corenum=1, electron=0, state=1):
         """
     The method to calculate .inp file with growing external force by ORCA and save file at the same location with .inp files, powered by ase.
-    run(self,orcaloc='./',method='B3LYP',basis_set='def2-SVP',freq=False,external_force=False,aim=[0,0],strain=0,maxiter=-1,maxcore=-1,corenum=1,electron=0,state=1)
+    run(self, orcaloc='./', method='B3LYP', basis_set='def2-SVP', freq=False, external_force=False, aim=[0, 0], strain=0, maxiter=-1, maxcore=-1, corenum=1, electron=0, state=1)
     orcaloc: Your location of ORCA.
-             If you have set ORCA from https://www.orcasoftware.de/tutorials_orca/first_steps/trouble_install.html#path-variable,
+             If you have set ORCA from https://www.orcasoftware.de/tutorials_orca/first_steps/trouble_install.html#path-variable, 
              you can skip this key word.
     method: Your semiempirical/ab initio/DFT calculation methods. The default is B3LYP.
     basis_set: Your basis sets. The default is def2-SVP.
@@ -70,10 +70,10 @@ class ssorca:
     Example 1:
         Input:
             from MCPoly.orcaset import ssorca
-            polymer=ssorca('Atom1')
-            orcaloc='./MCPoly/orca/'
-            polymer.run(orcaloc=orcaloc,method='B3LYP',basis_set='def2-TZVP',freq=True,aim=[2,3],forcestep={0:0.5},\
-                        maxcore=4096,corenum=8)
+            polymer = ssorca('Atom1')
+            orcaloc = './MCPoly/orca/'
+            polymer.run(orcaloc=orcaloc, method='B3LYP', basis_set='def2-TZVP', freq=True, aim=[2, 3], forcestep={0:0.5},\
+                        maxcore=4096, corenum=8)
         Output:
             File: Atom1.xyz
             Current External Force: 0.000 nN [Tue Apr 25 15:23:49 2023]
@@ -98,10 +98,10 @@ class ssorca:
     Example 2:
         Input:
             from MCPoly.orcaset import ssorca
-            polymer=ssorca('Atom2')
-            orcaloc='./MCPoly/orca/'
-            polymer.run(orcaloc=orcaloc,method='B3LYP',basis_set='def2-TZVP',freq=True,aim=[2,3],forcestep={0:1,5:0.5},\
-                        maxcore=4096,corenum=8)
+            polymer = ssorca('Atom2')
+            orcaloc = './MCPoly/orca/'
+            polymer.run(orcaloc=orcaloc, method='B3LYP', basis_set='def2-TZVP', freq=True, aim=[2, 3], forcestep={0:1, 5:0.5},\
+                        maxcore=4096, corenum=8)
         Output:
             File: Atom2.xyz
             Current External Force: 0.000 nN [Tue Apr 25 15:23:49 2023]
@@ -129,37 +129,57 @@ class ssorca:
             The polymer is broken. Programme Completed.[Tue Apr 25 17:51:31 2023]
             [file orca_main/run.cpp, line 73453]: ORCA finished with error return - aborting the run     -> COMMAND LINES
         """
-        
+        distances = []
+        force = []
         print('File: {0}.xyz'.format(self.file))
-        XYZtoINP(self.file,loc=self.loc,method=method,basis_set=basis_set,opt=True,freq=freq,\
-                 external_force=True,aim=aim,strain=strain,maxiter=maxiter,maxcore=maxcore,corenum=corenum,\
-                 electron=electron,state=state)
+        XyzToInp(self.file, fileloc=self.loc, method=method,\
+                 basis_set=basis_set, opt=True, freq=freq, \
+                 external_force=True, aim=aim, strain=strain,\
+                 maxiter=maxiter, maxcore=maxcore, corenum=corenum, \
+                 electron=electron, state=state)
         os.system('cp {0}.inp {0}_0.000.inp'.format(self.file))
-        keys=[]
+        keys = []
         for key in forcestep:
             keys.append(key)
         keys.reverse()
-        key=keys[0]
+        key = keys[0]
         while 1:
-            print('Current External Force: {0:.3f} nN [{1}]'.format(strain,t.ctime(t.time())))
-            orca(self.file+'_{0:.3f}'.format(strain),orcaloc,self.loc,self.loc)
-            s=status(self.file+'_{0:.3f}'.format(strain),self.loc).status(statusonly=True)
-            
-            if s==4:
-                xoy=checkbroken(self.file,strain,forcestep[key],aim)
-                if xoy==1:
-                    print('The polymer is broken. Programme Completed. [{0}]'.format(t.ctime(t.time())))
+            print('Current External Force: {0:.3f} nN [{1}]'.format(strain,\
+                                                                    t.ctime(t.time())))
+            orca(self.file+'_{0:.3f}'.format(strain), orcaloc, self.loc, self.loc)
+            s = status(self.file+'_{0:.3f}'.format(strain),\
+                       self.loc).status(statusonly=True)
+            atoms = read(file+'_{0:.3f}.xyz'.format(strain))
+            d = atoms.get_distance(aim[0], aim[1])
+            if s == 4:
+                distances.append(d)
+                force.append(strain)
+                xoy = checkbroken(distances, force)
+                if xoy == 1:
+                    print('The polymer is broken.\
+                        Programme Completed. [{0}]'.format(t.ctime(t.time())))
                     break
-                print('This calculation has some errors.\nThe programme will recalculate this system again. [{0}]\n'.format(t.ctime(t.time())))
-                orca(self.file+'_{0:.3f}'.format(strain),orcaloc,self.loc,self.loc)
-                s=status(self.file,self.loc).status(statusonly=True)
-                if s==4:
-                    print('This calculation still has some errors.\n Please check your .inp and try again. [{0}]\n'.format(t.ctime(t.time())))
+                print('This calculation has some errors.\nThe programme\
+                    will recalculate this system again. [{0}]\n'.format(t.ctime(t.time())))
+                orca(self.file+'_{0:.3f}'.format(strain), orcaloc, self.loc, self.loc)
+                s = status(self.file, self.loc).status(statusonly=True)
+                if s == 4:
+                    print('This calculation still has some errors.\n\
+                        Please check\
+                        your .inp and try again. [{0}]\n'.format(t.ctime(t.time())))
+                    distances[-1] = None
+                else:
+                    distances[-1] = d
+            else:
+                distances.append(d)
+                force.append(strain)
             for key in keys:
-                if strain>=key:
-                    XYZtoINP(self.file+'_{0:.3f}'.format(strain),inpname=self.file+'_{0:.3f}'.format(strain+forcestep[key]),\
-                             method=method,basis_set=basis_set,opt=True,freq=freq,\
-                             external_force=True,aim=aim,strain=strain+forcestep[key],maxiter=maxiter,maxcore=maxcore,\
-                             corenum=corenum,electron=electron,state=state)
-                    strain=strain+forcestep[key]
+                if strain >= key:
+                    XyzToInp(self.file+'_{0:.3f}'.format(strain),\
+                             inpname=self.file+'_{0:.3f}'.format(strain+forcestep[key]), \
+                             method=method, basis_set=basis_set, opt=True, freq=freq, \
+                             external_force=True, aim=aim, strain = strain + forcestep[key],\
+                             maxiter=maxiter, maxcore=maxcore,\
+                             corenum=corenum, electron=electron, state=state)
+                    strain = strain + forcestep[key]
                     break
